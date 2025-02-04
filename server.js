@@ -54,7 +54,7 @@ app.post('/api/wohnung', (req, res) => {
 app.get('/api/wohnungen', (req, res) => {
     res.json(wohnungen);
 });
-// Überprüft ob wohnung schon vorhanden
+// Überprüft ob wohnung schon vorhandenewe
 app.get('/api/wohnung/:id', (req, res) => {
     const wohnung = wohnungen.find(w => w.id === parseInt(req.params.id));
 
