@@ -33,8 +33,8 @@ jobs:
       - name: Install dependencies # same with all other dependencies in our app
         run: npm install
 
-      - name: Build Express App
-        run: node server.js
+#      - name: Build Express App
+#        run: node server.js
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
