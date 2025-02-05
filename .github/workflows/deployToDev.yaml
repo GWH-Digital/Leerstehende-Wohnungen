@@ -1,0 +1,159 @@
+name: CI/CD Pipeline Boilerplate CICD
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  DeployToAWSLightsail:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upgrade AWS CLI version and setup lightsailctl and setup java
+        run: |
+          aws --version
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+          which aws
+          aws --version
+          sudo curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js # NodeJS wouldn't be available automatically, so we need to add it
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.1" # change this to your version if it is different
+
+      - name: Install dependencies # same with all other dependencies in our app
+        run: npm install
+
+      - name: Build Express App
+        run: npm run build
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHub
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      #      - name: 'Create env file'
+      #        run: |
+      #          touch .env
+      #          echo APP_DEBUG=${{ secrets.APP_DEBUG }} >> .env
+      #          echo APP_ENV=${{ secrets.APP_ENV }} >> .env
+      #          echo APP_KEY=${{ secrets.APP_KEY }} >> .env
+      #          echo APP_LOCALE=${{ secrets.APP_LOCALE }} >> .env
+      #          echo APP_NAME=${{ secrets.APP_NAME }} >> .env
+      #          echo APP_TIMEZONE=${{ secrets.APP_TIMEZONE }} >> .env
+      #          echo APP_URL=${{ secrets.APP_URL }} >> .env
+      #          echo ASSET_URL=${{ secrets.ASSET_URL }} >> .env
+      #          echo BCRYPT_ROUNDS=${{ secrets.BCRYPT_ROUNDS }} >> .env
+      #          echo DB_CONNECTION=${{ secrets.DB_CONNECTION }} >> .env
+      #          echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
+      #          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+      #          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+      #          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+      #          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+      #          echo L5_SWAGGER_CONST_HOST=${{ secrets.L5_SWAGGER_CONST_HOST }} >> .env
+      #          echo VITE_APP_NAME=${{ secrets.VITE_APP_NAME }} >> .env
+      #          echo APP_AWS_ACCESS_KEY_ID=${{ secrets.APP_AWS_ACCESS_KEY_ID }} >> .env
+      #          echo APP_AWS_SECRET_ACCESS_KEY=${{ secrets.APP_AWS_SECRET_ACCESS_KEY }} >> .env
+      #          echo APP_AWS_DEFAULT_REGION=${{ secrets.APP_AWS_DEFAULT_REGION }} >> .env
+      #          echo APP_AWS_BUCKET=${{ secrets.APP_AWS_BUCKET }} >> .env
+      #          echo APP_AWS_URL=${{ secrets.APP_AWS_URL }} >> .env
+      #          echo APP_AWS_USE_PATH_STYLE_ENDPOINT=${{ secrets.APP_AWS_USE_PATH_STYLE_ENDPOINT }} >> .env
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Create Build and Tag tag
+        env:
+          IMAGE_TAG: latest
+          IMAGE_SHA_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -f docker/express/Dockerfile -t $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY}}:$IMAGE_TAG .
+          docker build -f docker/angexpressular/Dockerfile -t $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY}}:$IMAGE_SHA_TAG .
+          docker push $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY}}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY}}:$IMAGE_SHA_TAG
+
+          docker build -f docker/nginx/Dockerfile -t $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY_NGINX}}:$IMAGE_TAG .
+          docker build -f docker/nginx/Dockerfile -t $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY_NGINX}}:$IMAGE_SHA_TAG .
+          docker push $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY_NGINX}}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY_NGINX}}:$IMAGE_SHA_TAG
+          docker image ls
+
+      - name: Push the php Docker Image to lightsail
+        env:
+          IMAGE_SHA_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_URL: $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY}}:${{ github.sha }}
+        run: >
+          aws lightsail push-container-image
+          --service-name ${{ secrets.SERVICE_NAME }}
+          --image $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY}}:${{ github.sha }}
+          --region ${{ secrets.AWS_REGION }}
+          --label git-push
+
+      - name: Save updated php LIGHTSAIL_IMAGE_TAG
+        run: |
+          echo "LIGHTSAIL_DOCKER_IMAGE=$(aws lightsail get-container-images --service-name ${{ secrets.SERVICE_NAME }} --region ${{ secrets.AWS_REGION }} | jq -r .containerImages[0].image)"  >> $GITHUB_ENV
+
+      - name: Push the NGINX Docker Image to lightsail
+        env:
+          IMAGE_SHA_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_URL: $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY_NGINX}}:${{ github.sha }}
+        run: >
+          aws lightsail push-container-image
+          --service-name ${{ secrets.SERVICE_NAME }}
+          --image $ECR_REGISTRY/${{secrets.AWS_ECR_REPOSITORY_NGINX}}:${{ github.sha }}
+          --region ${{ secrets.AWS_REGION }}
+          --label git-push
+
+      - name: Save updated nginx LIGHTSAIL_IMAGE_TAG
+        run: |
+          echo "LIGHTSAIL_DOCKER_IMAGE_NGINX=$(aws lightsail get-container-images --service-name ${{ secrets.SERVICE_NAME }} --region ${{ secrets.AWS_REGION }} | jq -r .containerImages[0].image)"  >> $GITHUB_ENV
+
+      - name: Start New Deployment to Light Sail
+        run: |
+          aws lightsail create-container-service-deployment  --region ${{ secrets.AWS_REGION }} \
+          --service-name ${{secrets.SERVICE_NAME}} \
+          --output yaml \
+          --containers "{
+            \"nginx\": {
+              \"image\": \"$LIGHTSAIL_DOCKER_IMAGE_NGINX\",
+              \"environment\": {
+                  \"VERSION\": \"${{github.run_number}}\"
+                },
+              \"ports\": {
+                \"80\": \"HTTP\"
+              }
+            },
+            \"java\": {
+              \"image\": \"$LIGHTSAIL_DOCKER_IMAGE\",
+              \"environment\": {
+                  \"VERSION\": \"${{github.run_number}}\"
+                },
+              \"ports\": {
+                \"3000\": \"HTTP\"
+              }
+            }
+          }" \
+          --public-endpoint "{
+            \"containerName\": \"nginx\",
+            \"containerPort\": 80,
+            \"healthCheck\": {
+              \"path\": \"/\",
+              \"timeoutSeconds\": 60,
+              \"intervalSeconds\": 120
+            }
+          }"
