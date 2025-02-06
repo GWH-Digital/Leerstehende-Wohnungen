@@ -7,37 +7,40 @@
     <meta name="author" content="Wohnungsverwaltung">
     <meta name="robots" content="index, follow">
     <title>Wohnungsübersicht - Leerstehende Wohnungen</title>
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>🏡 Wohnungsübersicht</h1>
-    </header>
+<header>
+    <h1>🏡 Wohnungsübersicht</h1>
+</header>
 
-    <main>
-        <section>
-            <h2>Leerstehende Wohnungen</h2>
-            <div class="table-container">
-                <table aria-label="Übersicht der leerstehenden Wohnungen">
-                    <thead>
-                        <tr>
-                            <th>MO ID</th>
-                            <th>Adresse</th>
-                            <th>Größe (m²)</th>
-                            <th>Zimmer</th>
-                            <th>Grundmiete (€)</th>
-                            <th>Gesamtmiete (€)</th>
-                            <th>Verfügbar ab</th>
-                            <th>Etage</th>
-                            <th>Baujahr</th>
-                        </tr>
-                    </thead>
-                    <tbody id="wohnungen-body">
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-    <script src="script.js"></script>
+<main>
+    <section>
+        <h2>Leerstehende Wohnungen</h2>
+        <div class="table-container">
+            <table aria-label="Übersicht der leerstehenden Wohnungen">
+                <thead>
+                <tr>
+                    <th>Objekt ID</th>
+                    <th>Adresse</th>
+                    <th>Wohnfläche (m²)</th>
+                    <th>Zimmer</th>
+                    <th>Kaltmiete (€)</th>
+                    <th>Nebenkosten (€)</th>
+                    <th>Gesamtmiete (€)</th>
+                    <th>Verfügbar ab</th>
+                    <th>Etage</th>
+                    <th>Baujahr</th>
+                </tr>
+                </thead>
+                <tbody id="wohnungen-body">
+                <!-- Dynamischer Inhalt wird über script.js hinzugefügt -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>

@@ -43,32 +43,16 @@ jobs:
           role-session-name: GitHub
           aws-region: ${{ secrets.AWS_REGION }}
 
-      #      - name: 'Create env file'
-      #        run: |
-      #          touch .env
-      #          echo APP_DEBUG=${{ secrets.APP_DEBUG }} >> .env
-      #          echo APP_ENV=${{ secrets.APP_ENV }} >> .env
-      #          echo APP_KEY=${{ secrets.APP_KEY }} >> .env
-      #          echo APP_LOCALE=${{ secrets.APP_LOCALE }} >> .env
-      #          echo APP_NAME=${{ secrets.APP_NAME }} >> .env
-      #          echo APP_TIMEZONE=${{ secrets.APP_TIMEZONE }} >> .env
-      #          echo APP_URL=${{ secrets.APP_URL }} >> .env
-      #          echo ASSET_URL=${{ secrets.ASSET_URL }} >> .env
-      #          echo BCRYPT_ROUNDS=${{ secrets.BCRYPT_ROUNDS }} >> .env
-      #          echo DB_CONNECTION=${{ secrets.DB_CONNECTION }} >> .env
-      #          echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
-      #          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-      #          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
-      #          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-      #          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
-      #          echo L5_SWAGGER_CONST_HOST=${{ secrets.L5_SWAGGER_CONST_HOST }} >> .env
-      #          echo VITE_APP_NAME=${{ secrets.VITE_APP_NAME }} >> .env
-      #          echo APP_AWS_ACCESS_KEY_ID=${{ secrets.APP_AWS_ACCESS_KEY_ID }} >> .env
-      #          echo APP_AWS_SECRET_ACCESS_KEY=${{ secrets.APP_AWS_SECRET_ACCESS_KEY }} >> .env
-      #          echo APP_AWS_DEFAULT_REGION=${{ secrets.APP_AWS_DEFAULT_REGION }} >> .env
-      #          echo APP_AWS_BUCKET=${{ secrets.APP_AWS_BUCKET }} >> .env
-      #          echo APP_AWS_URL=${{ secrets.APP_AWS_URL }} >> .env
-      #          echo APP_AWS_USE_PATH_STYLE_ENDPOINT=${{ secrets.APP_AWS_USE_PATH_STYLE_ENDPOINT }} >> .env
+      - name: 'Create env file'
+        run: |
+          touch .env
+          echo DB_CONNECTION=${{ secrets.DB_CONNECTION }} >> .env
+          echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+  
 
       - name: Login to Amazon ECR
         id: login-ecr
