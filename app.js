@@ -205,7 +205,7 @@ app.get('/api/wohnung/:id', async (req, res) => {
 // DELETE: Wohnung löschen
 app.delete('/api/wohnung/:id', async (req, res) => {
     try {
-        const result = await pgClient.query('DELETE FROM wohnungen WHERE objektid = $1 RETURNING *', [req.params.id]);
+        const result = await pgClient.query('DELETE FROM wohnungen WHERE objektid = $1 RETURNING *', [req.params.id]); // * gelöschter wert wird returned
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: "Wohnung nicht gefunden!" });
