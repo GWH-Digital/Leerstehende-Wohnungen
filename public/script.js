@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("Wohnungsdaten erfolgreich geladen:", data);
         } catch (error) {
-            console.error("Fehler beim Laden der Wohnungen:", error.message || error);
+            console.error("Fehler beim Laden der wohnungen:", error.message || error);
             alert("Fehler beim Laden der Wohnungen.");
         }
     }

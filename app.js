@@ -220,4 +220,4 @@ app.delete('/api/wohnung/:id', async (req, res) => {
 });
 
 // Starten des Servers
-app.listen(PORT, () => console.log(`Server läuft auf http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server läuft auf http://${process.env.DB_HOST}`));
