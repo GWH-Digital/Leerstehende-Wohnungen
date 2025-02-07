@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Übersicht der leerstehenden Wohnungen mit Größe, Zimmeranzahl, Miete und Verfügbarkeit.">
+    <meta name="description"
+          content="Übersicht der leerstehenden Wohnungen mit Größe, Zimmeranzahl, Miete und Verfügbarkeit.">
     <meta name="author" content="Wohnungsverwaltung">
     <meta name="robots" content="index, follow">
     <title>Wohnungsübersicht - Leerstehende Wohnungen</title>
@@ -13,10 +14,26 @@
 <header>
     <h1>🏡 Wohnungsübersicht</h1>
 </header>
-
 <main>
     <section>
         <h2>Leerstehende Wohnungen</h2>
+        <div class="filter-container">
+            <label for="search">🔍 Suche:</label>
+            <input type="text" id="search" placeholder="Adresse oder Objekt ID eingeben">
+
+            <label for="filter-zimmer">🏡 Zimmer:</label>
+            <select id="filter-zimmer">
+                <option value="">Alle</option>
+                <option value="1">1 Zimmer</option>
+                <option value="2">2 Zimmer</option>
+                <option value="3">3 Zimmer</option>
+                <option value="4">4 Zimmer</option>
+                <option value="5+">5+ Zimmer</option>
+            </select>
+            <label for="filter-miete">💰 Max. Kaltmiete (€):</label>
+            <input type="number" id="filter-miete" placeholder="z. B. 1000">
+            <button id="apply-filters">Filter anwenden</button>
+        </div>
         <div class="table-container">
             <table aria-label="Übersicht der leerstehenden Wohnungen">
                 <thead>
@@ -34,7 +51,7 @@
                 </tr>
                 </thead>
                 <tbody id="wohnungen-body">
-                <!-- Dynamischer Inhalt wird über script.js hinzdugefügt -->
+                <!-- Dynamischer Inhalt wird über script.js hinzugefügt -->
                 </tbody>
             </table>
         </div>

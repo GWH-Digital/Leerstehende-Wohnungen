@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
     font-family: 'Poppins', sans-serif;
     text-align: center;
@@ -16,77 +17,149 @@ h2 {
     letter-spacing: 1px;
 }
 
-/* Enhanced Table Styling */
+/* Tabelle Design */
 table {
     width: 90%;
-    max-width: 1000px;
-    margin: 40px auto;
+    max-width: 1200px;
+    margin: 20px auto;
     border-collapse: collapse;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-table:hover {
-    transform: scale(1.02);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-}
-
-th {
-    background: linear-gradient(135deg, #43A047, #388E3C);
-    color: #fff;
-    text-transform: uppercase;
     font-size: 16px;
-    padding: 16px;
-    border-bottom: 4px solid #2E7D32;
-    /* Sticky header effect */
-    position: sticky;
-    top: 0;
-    z-index: 2;
+    line-height: 1.5;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
+/* Tabellenkopf */
+th {
+    background-color: #43A047;
+    color: #fff;
+    text-align: left;
+    font-weight: bold;
+    padding: 12px 15px;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+/* Tabellenzellen */
 td {
-    padding: 14px;
-    font-size: 15px;
-    color: #444;
+    padding: 12px 15px;
+    text-align: left;
+    color: #333;
     border-bottom: 1px solid #eee;
-    transition: background 0.3s ease;
 }
 
+/* Jede zweite Zeile in anderem Farbton */
 tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background: #f9f9f9;
 }
 
+tr:nth-child(odd) {
+    background: #fff;
+}
+
+/* Hover-Effekt */
 tr:hover {
-    background: rgba(67, 160, 71, 0.1);
-    transition: background 0.3s ease;
+    background-color: #f1f1f1;
 }
 
-/* Rounded corners for first and last cells */
+/* Abgerundete Ecken */
 td:first-child, th:first-child {
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
 td:last-child, th:last-child {
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* Responsiv: Tabelle an Geräte anpassen */
+@media screen and (max-width: 768px) {
     table {
-        width: 100%;
         font-size: 14px;
     }
 
     th, td {
-        padding: 12px;
+        padding: 10px;
     }
 
-    h2 {
-        font-size: 22px;
+    th {
+        font-size: 12px;
+    }
+}
+
+/* Filter-Bereich Design */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Für kleinere Bildschirme */
+}
+
+.filter-container label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #444;
+    margin-right: 10px;
+}
+
+.filter-container input[type="text"],
+.filter-container input[type="number"],
+.filter-container select {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+.filter-container input[type="text"]:focus,
+.filter-container input[type="number"]:focus,
+.filter-container select:focus {
+    border-color: #43A047; /* Fokushighlight */
+    box-shadow: 0 4px 10px rgba(67, 160, 71, 0.2);
+}
+
+.filter-container button {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #43A047, #388E3C);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.filter-container button:hover {
+    background: linear-gradient(135deg, #388E3C, #43A047);
+    transform: scale(1.05);
+}
+
+.filter-container button:active {
+    transform: scale(1);
+    background-color: #2E7D32;
+}
+
+/* Responsive Filter Anpassungen */
+@media (max-width: 768px) {
+    .filter-container {
+        flex-direction: column; /* Filter in Zeilen anordnen */
+        gap: 10px;
+    }
+
+    .filter-container input[type="text"],
+    .filter-container input[type="number"],
+    .filter-container select,
+    .filter-container button {
+        width: 90%; /* Breite an kleinere Geräte anpassen */
+        margin: auto;
     }
 }

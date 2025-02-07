@@ -97,7 +97,7 @@ async function getAllWohnungen() {
     return rows;
 }
 
-// Abfrage: Einzelne Wohnung abrufen
+// Abfrage: Einzelne Wohnung abrufens
 async function getWohnungById(objektid) {
     const query = `
         SELECT *
