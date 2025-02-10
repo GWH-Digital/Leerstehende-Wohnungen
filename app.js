@@ -7,7 +7,7 @@ const queries = require('./queries');
 
 const app = express();
 const PORT = 3000;
-const allowedIP = '62.96.101.222'; // Erlaubte IP-Adresse
+const allowedIPs = ['62.96.101.222', '172.26.5.220'];
 
 // Middleware
 app.use(express.json());
@@ -17,12 +17,12 @@ app.use(express.static(path.join(__dirname, "public")));
 // Diese Middleware wird für alle folgenden Routen ausgeführt.
 app.use((req, res, next) => {
     const clientIP = req.headers['x-forwarded-for'] || req.ip;
-    const headerIP  = req.headers['x-forwarded-for'];
-    const reqIP     = req.ip;
+    const headerIP = req.headers['x-forwarded-for'];
+    const reqIP = req.ip;
     console.log("Client IP:", clientIP);
     console.log("Header IP:", headerIP);
     console.log("Request IP:", reqIP);
-    if (clientIP === allowedIP) {
+    if (allowedIPs.includes(clientIP)) {
         next();
     } else {
         res.status(403).send('Zugriff verweigert: Ihre IP ist nicht autorisiert.');
@@ -47,7 +47,7 @@ app.post("/api/wohnung", async (req, res) => {
 
         // Prüfen, ob die ObjektID bereits existiert
         if (await queries.checkObjektIDExists(objektid)) {
-            return res.status(400).json({ error: "ObjektID existiert bereits." });
+            return res.status(400).json({error: "ObjektID existiert bereits."});
         }
 
         // Neue Wohnung einfügen
@@ -66,10 +66,10 @@ app.post("/api/wohnung", async (req, res) => {
         await queries.insertFreitexte(objektid, freitexte.objekttitel, freitexte.lage, freitexte.ausstattungsbeschreibung);
         await queries.insertGeo(objektid, geo.strasse, geo.hausnummer, geo.plz, geo.ort, geo.etage);
 
-        res.status(201).json({ message: "Wohnung erfolgreich hinzugefügt!", objektid });
+        res.status(201).json({message: "Wohnung erfolgreich hinzugefügt!", objektid});
     } catch (error) {
         console.error("Fehler beim Speichern der Wohnung:", error);
-        res.status(500).json({ error: "Interner Serverfehler" });
+        res.status(500).json({error: "Interner Serverfehler"});
     }
 });
 
@@ -80,7 +80,7 @@ app.get("/api/wohnungen", async (req, res) => {
         res.json(wohnungen);
     } catch (error) {
         console.error("Fehler beim Abrufen der Wohnungen:", error);
-        res.status(500).json({ error: "Interner Serverfehler" });
+        res.status(500).json({error: "Interner Serverfehler"});
     }
 });
 
@@ -89,12 +89,12 @@ app.get("/api/wohnung/:id", async (req, res) => {
     try {
         const wohnung = await queries.getWohnungById(req.params.id);
         if (!wohnung) {
-            return res.status(404).json({ error: "Wohnung nicht gefunden!" });
+            return res.status(404).json({error: "Wohnung nicht gefunden!"});
         }
         res.json(wohnung);
     } catch (error) {
         console.error("Fehler beim Abrufen der Wohnung:", error);
-        res.status(500).json({ error: "Interner Serverfehler" });
+        res.status(500).json({error: "Interner Serverfehler"});
     }
 });
 
@@ -103,12 +103,12 @@ app.delete("/api/wohnung/:id", async (req, res) => {
     try {
         const deletedWohnung = await queries.deleteWohnung(req.params.id);
         if (!deletedWohnung) {
-            return res.status(404).json({ error: "Wohnung nicht gefunden!" });
+            return res.status(404).json({error: "Wohnung nicht gefunden!"});
         }
-        res.status(200).json({ message: "Wohnung erfolgreich gelöscht!", data: deletedWohnung });
+        res.status(200).json({message: "Wohnung erfolgreich gelöscht!", data: deletedWohnung});
     } catch (error) {
         console.error("Fehler beim Löschen der Wohnung:", error);
-        res.status(500).json({ error: "Interner Serverfehler" });
+        res.status(500).json({error: "Interner Serverfehler"});
     }
 });
 
