@@ -33,7 +33,7 @@ table {
 
 /* Tabellenkopf */
 th {
-    background-color: #43A047;
+    background-color: #00a297;
     color: #fff;
     text-align: left;
     font-weight: bold;
@@ -122,7 +122,7 @@ td:last-child, th:last-child {
 .filter-container input[type="text"]:focus,
 .filter-container input[type="number"]:focus,
 .filter-container select:focus {
-    border-color: #43A047; /* Fokushighlight */
+    border-color: #00a297; /* Fokushighlight */
     box-shadow: 0 4px 10px rgba(67, 160, 71, 0.2);
 }
 
@@ -131,7 +131,7 @@ td:last-child, th:last-child {
     font-size: 14px;
     font-weight: bold;
     color: #fff;
-    background: linear-gradient(135deg, #43A047, #388E3C);
+    background: #00A297FF;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -139,13 +139,13 @@ td:last-child, th:last-child {
 }
 
 .filter-container button:hover {
-    background: linear-gradient(135deg, #388E3C, #43A047);
+    background: #00A297FF;
     transform: scale(1.05);
 }
 
 .filter-container button:active {
     transform: scale(1);
-    background-color: #2E7D32;
+    background-color: #00a297;
 }
 
 /* Responsive Filter Anpassungen */
