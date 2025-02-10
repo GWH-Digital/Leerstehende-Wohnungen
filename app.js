@@ -1,15 +1,31 @@
 require('dotenv').config();
 const express = require('express');
-//const cors = require('cors');
+// const cors = require('cors');
 const path = require('path');
 const pgClient = require('./dbconnection');
 const queries = require('./queries');
+
 const app = express();
 const PORT = 3000;
+const allowedIP = '62.96.101.222'; // Erlaubte IP-Adresse
 
+// Middleware
 app.use(express.json());
-//app.use(cors({ origin: '*' }));
+// app.use(cors({ origin: '*' }));
 app.use(express.static(path.join(__dirname, "public")));
+
+// Diese Middleware wird für alle folgenden Routen ausgeführt.
+app.use((req, res, next) => {
+    const clientIP = req.headers['x-forwarded-for'] || req.ip;
+    console.log("Client IP:", clientIP);
+
+    if (clientIP === allowedIP) {
+        next();
+    } else {
+        res.status(403).send('Zugriff verweigert: Ihre IP ist nicht autorisiert.');
+    }
+});
+
 
 // POST: Neue Wohnung hinzufügen
 app.post("/api/wohnung", async (req, res) => {
@@ -93,5 +109,12 @@ app.delete("/api/wohnung/:id", async (req, res) => {
     }
 });
 
-// Starten des Servers
-app.listen(PORT, () => console.log(`Server läuft auf http://${process.env.DB_HOST}`));
+// Beispielroute für die Startseite
+app.get('/', (req, res) => {
+    res.send('Willkommen auf der Webseite!');
+});
+
+// Server starten
+app.listen(PORT, () => {
+    console.log(`Server läuft auf Port ${PORT}`);
+});
