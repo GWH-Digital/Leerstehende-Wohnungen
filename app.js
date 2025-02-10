@@ -17,8 +17,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // Diese Middleware wird für alle folgenden Routen ausgeführt.
 app.use((req, res, next) => {
     const clientIP = req.headers['x-forwarded-for'] || req.ip;
+    const headerIP  = req.headers['x-forwarded-for'];
+    const reqIP     = req.ip;
     console.log("Client IP:", clientIP);
-
+    console.log("Header IP:", headerIP);
+    console.log("Request IP:", reqIP);
     if (clientIP === allowedIP) {
         next();
     } else {
@@ -107,11 +110,6 @@ app.delete("/api/wohnung/:id", async (req, res) => {
         console.error("Fehler beim Löschen der Wohnung:", error);
         res.status(500).json({ error: "Interner Serverfehler" });
     }
-});
-
-// Beispielroute für die Startseite
-app.get('/', (req, res) => {
-    res.send('Willkommen auf der Webseite!');
 });
 
 // Server starten
